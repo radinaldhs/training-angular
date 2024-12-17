@@ -1,0 +1,136 @@
+<main>
+  <button
+    class="px-4 py-2 m-6 text-white bg-blue-500 rounded hover:bg-blue-600"
+    routerLink="/"
+  >
+    < Home
+  </button>
+  <div
+    *ngIf="pokemon"
+    class="max-w-lg p-6 mx-auto mt-10 bg-white rounded-md shadow-lg"
+  >
+    <h1 class="mb-4 text-2xl font-bold text-center">
+      {{ pokemon.name | uppercase }}
+    </h1>
+    <img
+      [src]="pokemon.sprites.front_default"
+      alt="{{ pokemon.name }}"
+      class="w-32 h-32 mx-auto mb-4"
+    />
+
+    <div class="mt-4 text-center">
+      <button
+        class="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+        [disabled]="!pokemonCryUrl"
+        (click)="playPokemonCry()"
+      >
+        Hear Cry
+      </button>
+    </div>
+
+    <h2 class="mb-2 text-lg font-semibold">Abilities</h2>
+    <ul class="pl-5 list-disc">
+      <li *ngFor="let ability of pokemon.abilities">
+        {{ ability.ability.name }}
+      </li>
+    </ul>
+
+    <h2 class="mt-4 mb-2 text-lg font-semibold">Stats</h2>
+    <ul>
+      <li *ngFor="let stat of pokemon.stats">
+        {{ stat.stat.name }}: {{ stat.base_stat }}
+      </li>
+    </ul>
+
+    <h2 class="mt-4 mb-2 text-lg font-semibold">Types</h2>
+    <ul>
+      <li *ngFor="let type of pokemon.types">
+        {{ type.type.name }}
+      </li>
+    </ul>
+
+    <div class="flex gap-4 mt-4">
+      <a
+        class="px-4 py-2 text-white bg-gray-500 rounded-md hover:bg-gray-600"
+        [class.opacity-50]="currentEvolutionIndex === 0"
+        [routerLink]="
+          currentEvolutionIndex > 0
+            ? [
+                '/pokemon-detail',
+                evolutionChain[currentEvolutionIndex - 1]?.name
+              ]
+            : null
+        "
+        [queryParamsHandling]="'merge'"
+        [attr.aria-disabled]="currentEvolutionIndex === 0 ? 'true' : null"
+      >
+        Devolve
+      </a>
+      <a
+        class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+        [class.opacity-50]="currentEvolutionIndex === evolutionChain.length - 1"
+        [routerLink]="
+          currentEvolutionIndex < evolutionChain.length - 1
+            ? [
+                '/pokemon-detail',
+                evolutionChain[currentEvolutionIndex + 1]?.name
+              ]
+            : null
+        "
+        [queryParamsHandling]="'merge'"
+        [attr.aria-disabled]="
+          currentEvolutionIndex === evolutionChain.length - 1 ? 'true' : null
+        "
+      >
+        Evolve
+      </a>
+    </div>
+
+    <div class="w-full max-w-md p-4 mt-4">
+      <h3 class="text-lg font-semibold">Evolution Chain</h3>
+      <ul class="mt-4 space-y-2">
+        <li
+          *ngFor="let evolution of evolutionChain; let i = index"
+          [ngClass]="{
+            'bg-yellow-400 text-black font-bold': i === currentEvolutionIndex,
+            'bg-gray-300': i !== currentEvolutionIndex
+          }"
+          class="p-2 rounded-md"
+        >
+          {{ evolution.name | uppercase }}
+        </li>
+      </ul>
+    </div>
+    <div class="mt-6 text-center">
+      <button
+        class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
+        (click)="toggleDrawer()"
+      >
+        Buy this
+      </button>
+    </div>
+    <div class="mt-6 text-center">
+      <a
+        routerLink="/pokemon"
+        class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+      >
+        Back to List
+      </a>
+    </div>
+  </div>
+</main>
+
+<app-pokemon-purchase-drawer
+  *ngIf="isDrawerOpen"
+  [pokemon]="pokemon"
+  [evolutionChain]="evolutionChain"
+  (closeDrawer)="toggleDrawer()"
+  (formSubmitted)="openSuccessModal()"
+></app-pokemon-purchase-drawer>
+
+<app-purchase-success-modal
+  *ngIf="showSuccessModal"
+  (close)="closeSuccessModal()"
+  (continueBrowsing)="closeSuccessModal()"
+  (goToSubmission)="navigateToSubmission()"
+></app-purchase-success-modal>

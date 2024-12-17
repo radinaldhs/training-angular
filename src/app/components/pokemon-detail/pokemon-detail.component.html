@@ -1,0 +1,15 @@
+<div *ngIf="pokemon" class="flex flex-col items-center mx-auto mt-6 rounded shadow">
+    <div class="p-4 my-5" [ngClass]="theme === 'light' ? 'bg-white' : 'bg-gray-700 text-white'">
+        <h2 class="text-xl font-semibold">{{ pokemon.name | uppercase }}</h2>
+        <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}" />
+        <ul>
+            <li *ngFor="let ability of pokemon.abilities">
+                Ability: {{ ability.ability.name }}
+            </li>
+        </ul>
+        <button class="px-4 py-2 mt-5 text-center text-white bg-green-500 rounded-md hover:bg-green-600"
+            routerLink="/pokemon-detail/{{ pokemon.name }}">
+            Go to Detail
+        </button>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+<main
+  class="h-screen p-4"
+  [ngClass]="theme === 'light' ? 'bg-gray-100' : 'bg-gray-800 text-white'"
+>
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold">{{ title }}</h1>
+    <button
+      class="px-4 py-2 text-white bg-blue-500 rounded"
+      (click)="toggleTheme()"
+    >
+      Toggle Theme
+    </button>
+    <button class="px-4 py-2 text-white bg-blue-500 rounded" routerLink="/">
+      Home
+    </button>
+  </div>
+
+  <div class="flex items-center gap-4 mb-4">
+    <input
+      type="text"
+      placeholder="Search Pokémon"
+      [(ngModel)]="filter"
+      (input)="applyFilter()"
+      [ngClass]="
+        theme === 'light' ? 'bg-white text-black' : 'bg-gray-700 text-white'
+      "
+      class="p-2 border border-gray-300 rounded"
+    />
+
+    <select
+      [(ngModel)]="selectedElement"
+      (change)="applyFilter()"
+      [ngClass]="
+        theme === 'light' ? 'bg-white text-black' : 'bg-gray-700 text-white'
+      "
+      class="p-2 border border-gray-300 rounded"
+    >
+      <option value="">All Elements</option>
+      <option *ngFor="let element of elements" [value]="element">
+        {{ element }}
+      </option>
+    </select>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+    <div
+      *ngFor="let pokemon of paginatedPokemon"
+      (click)="selectPokemon(pokemon.url)"
+      [ngClass]="theme === 'light' ? 'bg-white' : 'bg-gray-700'"
+      class="p-4 transition-all transform rounded shadow cursor-pointer hover:shadow-xl hover:scale-105"
+    >
+      <img
+        [src]="pokemon.image"
+        alt="{{ pokemon.name }}"
+        class="object-contain w-full h-24 mb-2"
+      />
+      <h2 class="text-lg font-semibold text-center">{{ pokemon.name }}</h2>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between mt-6">
+    <button
+      class="px-4 py-2 text-white bg-blue-500 rounded"
+      [disabled]="currentPage === 1"
+      (click)="previousPage()"
+    >
+      Previous
+    </button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button
+      class="px-4 py-2 text-white bg-blue-500 rounded"
+      [disabled]="currentPage === totalPages"
+      (click)="nextPage()"
+    >
+      Next
+    </button>
+  </div>
+
+  <app-pokemon-detail
+    [pokemon]="selectedPokemon"
+    [theme]="theme"
+  ></app-pokemon-detail>
+</main>

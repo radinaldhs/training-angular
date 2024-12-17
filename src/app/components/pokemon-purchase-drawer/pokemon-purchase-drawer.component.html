@@ -1,0 +1,140 @@
+<div
+  *ngIf="pokemon"
+  class="fixed top-0 right-0 w-1/2 h-full p-6 bg-white shadow-lg drawer"
+>
+  <button
+    class="absolute font-bold text-red-500 top-4 right-4"
+    (click)="closeDrawer.emit()"
+  >
+    ✕
+  </button>
+  <h2 class="mb-4 text-xl font-bold">Purchase Pokémon</h2>
+
+  <form [formGroup]="purchaseForm" (ngSubmit)="submitForm()">
+    <div class="mb-4">
+      <label class="block font-semibold">First Name</label>
+      <input
+        type="text"
+        formControlName="firstName"
+        class="w-full p-2 border border-gray-300 rounded"
+        (blur)="purchaseForm.get('firstName')?.markAsTouched()"
+      />
+      <div
+        *ngIf="
+          purchaseForm.get('firstName')?.invalid &&
+          purchaseForm.get('firstName')?.touched
+        "
+        class="text-sm text-red-500"
+      >
+        First Name is required.
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-semibold">Last Name</label>
+      <input
+        type="text"
+        formControlName="lastName"
+        class="w-full p-2 border border-gray-300 rounded"
+      />
+    </div>
+
+    <!-- Email -->
+    <div class="mb-4">
+      <label class="block font-semibold">Email</label>
+      <input
+        type="email"
+        formControlName="email"
+        class="w-full p-2 border border-gray-300 rounded"
+        (blur)="purchaseForm.get('email')?.markAsTouched()"
+      />
+      <div
+        *ngIf="
+          purchaseForm.get('email')?.invalid &&
+          purchaseForm.get('email')?.touched
+        "
+        class="text-sm text-red-500"
+      >
+        Valid email is required.
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-semibold">Phone Number</label>
+      <div class="flex items-center">
+        <select
+          formControlName="phoneCountryCode"
+          class="p-2 mr-2 border border-gray-300 rounded"
+        >
+          <option *ngFor="let country of countries" [value]="country.code">
+            {{ country.name }} {{ country.code }}
+          </option>
+        </select>
+        <input
+          type="text"
+          formControlName="phone"
+          class="w-full p-2 border border-gray-300 rounded"
+          (blur)="purchaseForm.get('phone')?.markAsTouched()"
+        />
+      </div>
+      <div
+        *ngIf="
+          purchaseForm.get('phone')?.invalid &&
+          purchaseForm.get('phone')?.touched
+        "
+        class="text-sm text-red-500"
+      >
+        Phone Number is required.
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-semibold">Address</label>
+      <textarea
+        formControlName="address"
+        rows="4"
+        class="w-full p-2 border border-gray-300 rounded"
+      ></textarea>
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-semibold">Buy Option</label>
+      <select
+        formControlName="buyOption"
+        class="w-full p-2 border border-gray-300 rounded"
+      >
+        <option value="1">Buy 1 (Selected Pokémon)</option>
+        <option value="all">Buy All Evolutions</option>
+      </select>
+    </div>
+
+    <h3 class="mb-2 font-bold">Pokémon to Purchase:</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div
+        *ngFor="
+          let pokemon of purchaseForm.value.buyOption === '1'
+            ? [pokemon]
+            : evolutionChain
+        "
+        class="p-4 bg-gray-100 rounded shadow"
+      >
+        <img
+          [src]="pokemon.image || pokemon.sprites.front_default"
+          alt="{{ pokemon.name }}"
+          class="object-contain w-full h-20"
+        />
+        <p class="mt-2 font-semibold text-center">
+          {{ pokemon.name | uppercase }}
+        </p>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+      [ngClass]="{ 'opacity-50': purchaseForm.invalid }"
+    >
+      Submit
+    </button>
+  </form>
+</div>
