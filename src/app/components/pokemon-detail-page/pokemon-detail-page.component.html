@@ -1,10 +1,4 @@
 <main>
-  <button
-    class="px-4 py-2 m-6 text-white bg-blue-500 rounded hover:bg-blue-600"
-    routerLink="/"
-  >
-    < Home
-  </button>
   <div
     *ngIf="pokemon"
     class="max-w-lg p-6 mx-auto mt-10 bg-white rounded-md shadow-lg"
@@ -13,20 +7,14 @@
       {{ pokemon.name | uppercase }}
     </h1>
     <img
-      [src]="pokemon.sprites.front_default"
+      [src]="
+        isFrontSprite
+          ? pokemon.sprites.front_default
+          : pokemon.sprites.back_default
+      "
       alt="{{ pokemon.name }}"
-      class="w-32 h-32 mx-auto mb-4"
+      class="w-32 h-32 mx-auto mb-4 transition-transform duration-500 ease-in-out transform hover:scale-105"
     />
-
-    <div class="mt-4 text-center">
-      <button
-        class="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
-        [disabled]="!pokemonCryUrl"
-        (click)="playPokemonCry()"
-      >
-        Hear Cry
-      </button>
-    </div>
 
     <h2 class="mb-2 text-lg font-semibold">Abilities</h2>
     <ul class="pl-5 list-disc">
@@ -36,15 +24,37 @@
     </ul>
 
     <h2 class="mt-4 mb-2 text-lg font-semibold">Stats</h2>
-    <ul>
-      <li *ngFor="let stat of pokemon.stats">
-        {{ stat.stat.name }}: {{ stat.base_stat }}
-      </li>
-    </ul>
+    <div *ngFor="let stat of pokemon.stats" class="mb-2">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-sm font-semibold">{{
+          stat.stat.name | titlecase
+        }}</span>
+        <span class="text-sm font-semibold">{{ stat.base_stat }}</span>
+      </div>
+      <div class="w-full h-3 bg-gray-200 rounded-full">
+        <div
+          class="h-full bg-green-500 rounded-full"
+          [style.width.%]="stat.base_stat"
+        ></div>
+      </div>
+    </div>
 
     <h2 class="mt-4 mb-2 text-lg font-semibold">Types</h2>
-    <ul>
-      <li *ngFor="let type of pokemon.types">
+    <ul class="flex gap-2">
+      <li
+        *ngFor="let type of pokemon.types"
+        class="px-3 py-1 text-white rounded-full"
+        [ngClass]="{
+          'bg-blue-500': type.type.name === 'water',
+          'bg-green-500': type.type.name === 'grass',
+          'bg-red-500': type.type.name === 'fire',
+          'bg-yellow-500': type.type.name === 'electric',
+          'bg-gray-500': type.type.name === 'rock',
+          'bg-purple-500': type.type.name === 'poison',
+          'bg-gray-400': type.type.name === 'normal',
+          'bg-pink-500': type.type.name === 'fairy'
+        }"
+      >
         {{ type.type.name }}
       </li>
     </ul>
@@ -101,6 +111,7 @@
         </li>
       </ul>
     </div>
+
     <div class="mt-6 text-center">
       <button
         class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"

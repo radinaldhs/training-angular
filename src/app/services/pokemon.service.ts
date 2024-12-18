@@ -13,6 +13,11 @@ export class PokemonService {
     console.log('PokemonService: Constructor called');
   }
 
+  async getPokemonTypes(): Promise<string[]> {
+    const response = await axios.get('https://pokeapi.co/api/v2/type');
+    return response.data.results.map((type: any) => type.name);
+  }
+
   async getPokemonList(limit: number = 20) {
     const response = await axios.get(`${this.apiUrl}?limit=${limit}`);
     return response.data.results;

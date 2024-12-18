@@ -1,11 +1,27 @@
 <div class="p-6">
-  <button
-    class="px-4 py-2 my-5 text-white bg-blue-500 rounded hover:bg-blue-600"
-    routerLink="/"
-  >
-    Home
-  </button>
   <h1 class="mb-6 text-2xl font-bold">Form Submissions</h1>
+
+  <!-- Search and Items Per Page Controls -->
+  <div class="flex items-center justify-between mb-4">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (input)="onSearchChange()"
+      placeholder="Search by name..."
+      class="w-1/3 p-2 border border-gray-300 rounded"
+    />
+
+    <select
+      [(ngModel)]="itemsPerPage"
+      (change)="onItemsPerPageChange(itemsPerPage)"
+      class="p-2 border border-gray-300 rounded"
+    >
+      <option value="10" selected>10 items per page</option>
+      <option value="50">50 items per page</option>
+    </select>
+  </div>
+
+  <!-- Submissions Table -->
   <table class="w-full border border-collapse border-gray-300">
     <thead class="bg-gray-200">
       <tr>
@@ -17,7 +33,7 @@
     </thead>
     <tbody>
       <tr
-        *ngFor="let submission of submissions"
+        *ngFor="let submission of filteredSubmissions"
         class="cursor-pointer hover:bg-gray-100"
       >
         <td class="p-2 border border-gray-300">{{ submission.id }}</td>
@@ -42,6 +58,25 @@
       </tr>
     </tbody>
   </table>
+
+  <!-- Pagination Controls -->
+  <div class="flex justify-between mt-4">
+    <button
+      class="px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600"
+      [disabled]="currentPage === 1"
+      (click)="changePage(currentPage - 1)"
+    >
+      Previous
+    </button>
+    <div>Page {{ currentPage }} of {{ totalPages }}</div>
+    <button
+      class="px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600"
+      [disabled]="currentPage === totalPages"
+      (click)="changePage(currentPage + 1)"
+    >
+      Next
+    </button>
+  </div>
 
   <!-- Delete Confirmation Modal -->
   <app-delete-confirmation-modal

@@ -10,7 +10,14 @@ import { Router } from '@angular/router';
 })
 export class FormSubmissionsTableComponent implements OnInit {
   submissions: any[] = [];
+  filteredSubmissions: any[] = [];
   deleteTarget: any = null;
+
+  // Pagination and search controls
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  totalPages: number = 1;
+  searchQuery: string = '';
 
   constructor(
     private databaseService: RealtimeDatabaseService,
@@ -18,7 +25,8 @@ export class FormSubmissionsTableComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.fetchSubmissions();
+    await this.fetchSubmissions();
+    this.applyFiltersAndPagination();
   }
 
   async fetchSubmissions(): Promise<void> {
@@ -31,6 +39,23 @@ export class FormSubmissionsTableComponent implements OnInit {
     } catch (error) {
       console.error('Error fetching form submissions:', error);
     }
+  }
+
+  applyFiltersAndPagination(): void {
+    // Filter submissions based on the search query
+    const filtered = this.submissions.filter((submission) =>
+      `${submission.firstName} ${submission.lastName}`
+        .toLowerCase()
+        .includes(this.searchQuery.toLowerCase())
+    );
+
+    // Calculate total pages
+    this.totalPages = Math.ceil(filtered.length / this.itemsPerPage);
+
+    // Paginate filtered submissions
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.filteredSubmissions = filtered.slice(start, end);
   }
 
   editSubmission(submissionId: string): void {
@@ -54,8 +79,27 @@ export class FormSubmissionsTableComponent implements OnInit {
         (sub) => sub.id !== this.deleteTarget.id
       );
       this.closeDeleteModal();
+      this.applyFiltersAndPagination();
     } catch (error) {
       console.error('Error deleting form submission:', error);
     }
+  }
+
+  changePage(newPage: number): void {
+    if (newPage >= 1 && newPage <= this.totalPages) {
+      this.currentPage = newPage;
+      this.applyFiltersAndPagination();
+    }
+  }
+
+  onItemsPerPageChange(newLimit: number): void {
+    this.itemsPerPage = newLimit;
+    this.currentPage = 1; // Reset to the first page
+    this.applyFiltersAndPagination();
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1; // Reset to the first page
+    this.applyFiltersAndPagination();
   }
 }

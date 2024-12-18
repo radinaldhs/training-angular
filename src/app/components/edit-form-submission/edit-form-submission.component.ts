@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RealtimeDatabaseService } from '../../services/realtime-database.service';
 import { PokemonService } from '../../services/pokemon.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { CanComponentDeactivate } from '../../guards/can-deactivate.guard';
 
 @Component({
   selector: 'app-edit-form-submission',
@@ -11,11 +11,14 @@ import { Router } from '@angular/router';
   styleUrls: ['./edit-form-submission.component.css'],
   standalone: false,
 })
-export class EditFormSubmissionComponent implements OnInit {
+export class EditFormSubmissionComponent
+  implements OnInit, CanComponentDeactivate
+{
   submissionId: string = '';
   submissionForm: FormGroup;
   pokemonToBuy: any[] = [];
   buyOption: string = '1';
+  formDirty: boolean = false;
   countries = [
     { code: '+1', name: '🇺🇸' },
     { code: '+62', name: '🇮🇩' },
@@ -32,7 +35,7 @@ export class EditFormSubmissionComponent implements OnInit {
       firstName: ['', Validators.required],
       lastName: [''],
       email: ['', [Validators.required, Validators.email]],
-      phoneCountryCode: ['+1', Validators.required], // Default to '+1'
+      phoneCountryCode: ['+1', Validators.required],
       phone: ['', Validators.required],
       address: [''],
     });
@@ -57,6 +60,10 @@ export class EditFormSubmissionComponent implements OnInit {
     }
 
     this.submissionForm.patchValue(submission);
+
+    this.submissionForm.valueChanges.subscribe(() => {
+      this.formDirty = true;
+    });
   }
 
   async saveChanges(): Promise<void> {
@@ -68,7 +75,7 @@ export class EditFormSubmissionComponent implements OnInit {
     const updatedData = {
       ...this.submissionForm.value,
       buyOption: this.buyOption,
-      pokemonToBuy: this.pokemonToBuy.map((pokemon) => pokemon.name), // Save only Pokémon names
+      pokemonToBuy: this.pokemonToBuy.map((pokemon) => pokemon.name),
     };
 
     try {
@@ -76,9 +83,17 @@ export class EditFormSubmissionComponent implements OnInit {
         this.submissionId,
         updatedData
       );
+      this.formDirty = false;
       this.router.navigate(['/submission']);
     } catch (error) {
       console.error('Error updating submission:', error);
     }
+  }
+
+  canDeactivate(): boolean {
+    if (this.formDirty) {
+      return confirm('You have unsaved changes. Do you really want to leave?');
+    }
+    return true;
   }
 }

@@ -1,0 +1,106 @@
+<main class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="max-w-md p-8 bg-white rounded-lg shadow-lg">
+    <div *ngIf="!user">
+      <!-- Title -->
+      <h1 class="text-2xl font-extrabold text-center text-gray-800">
+        {{
+          activeTab === "login" ? "Login to Your Account" : "Create an Account"
+        }}
+      </h1>
+
+      <!-- Tab Buttons -->
+      <div class="flex justify-center mt-6 space-x-4">
+        <button
+          class="px-6 py-2 font-semibold text-white transition duration-200 rounded-lg focus:outline-none"
+          [ngClass]="{
+            'bg-blue-600 hover:bg-blue-700': activeTab === 'login',
+            'bg-gray-300 hover:bg-gray-400': activeTab !== 'login'
+          }"
+          (click)="setActiveTab('login')"
+        >
+          Login
+        </button>
+        <!-- <button
+          class="px-6 py-2 font-semibold text-white transition duration-200 rounded-lg focus:outline-none"
+          [ngClass]="{
+            'bg-blue-600 hover:bg-blue-700': activeTab === 'register',
+            'bg-gray-300 hover:bg-gray-400': activeTab !== 'register'
+          }"
+          (click)="setActiveTab('register')"
+        >
+          Register
+        </button> -->
+      </div>
+
+      <!-- Form -->
+      <form class="mt-6 space-y-6">
+        <!-- Email Field -->
+        <div>
+          <label
+            for="email"
+            class="block mb-2 text-sm font-medium text-gray-600"
+          >
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="email"
+            name="email"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your email"
+          />
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <label
+            for="password"
+            class="block mb-2 text-sm font-medium text-gray-600"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            [(ngModel)]="password"
+            name="password"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your password"
+          />
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div *ngIf="activeTab === 'register'">
+          <label
+            for="confirmPassword"
+            class="block mb-2 text-sm font-medium text-gray-600"
+          >
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Confirm your password"
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="button"
+          class="w-full py-3 text-white transition duration-200 rounded-lg focus:outline-none"
+          [ngClass]="{
+            'bg-green-500 hover:bg-green-600': activeTab === 'login',
+            'bg-blue-500 hover:bg-blue-600': activeTab === 'register'
+          }"
+          (click)="activeTab === 'login' ? login() : register()"
+        >
+          {{ activeTab === "login" ? "Login" : "Register" }}
+        </button>
+      </form>
+    </div>
+  </div>
+</main>

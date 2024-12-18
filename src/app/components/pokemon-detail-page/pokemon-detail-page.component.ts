@@ -15,6 +15,7 @@ export class PokemonDetailPageComponent implements OnInit {
   pokemonCryUrl: string | null = null;
   isDrawerOpen: boolean = false;
   showSuccessModal: boolean = false;
+  isFrontSprite: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +30,10 @@ export class PokemonDetailPageComponent implements OnInit {
         await this.loadPokemonDetails(name);
       }
     });
+
+    setInterval(() => {
+      this.isFrontSprite = !this.isFrontSprite;
+    }, 2000);
   }
 
   private async loadPokemonDetails(name: string): Promise<void> {
@@ -58,22 +63,6 @@ export class PokemonDetailPageComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error loading Pokémon details:', error);
-    }
-  }
-
-  async evolve(): Promise<void> {
-    if (this.currentEvolutionIndex < this.evolutionChain.length - 1) {
-      this.currentEvolutionIndex++;
-      const nextEvolution = this.evolutionChain[this.currentEvolutionIndex];
-      await this.loadPokemonDetails(nextEvolution.name);
-    }
-  }
-
-  async devolve(): Promise<void> {
-    if (this.currentEvolutionIndex > 0) {
-      this.currentEvolutionIndex--;
-      const previousEvolution = this.evolutionChain[this.currentEvolutionIndex];
-      await this.loadPokemonDetails(previousEvolution.name);
     }
   }
 

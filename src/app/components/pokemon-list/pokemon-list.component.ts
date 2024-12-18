@@ -23,7 +23,7 @@ export class PokemonListComponent implements OnInit, OnChanges, OnDestroy {
   theme: 'light' | 'dark' = 'light';
   filter: string = '';
   selectedElement: string = '';
-  elements: string[] = ['fire', 'water', 'grass', 'electric', 'ice', 'rock'];
+  elements: string[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 10;
   totalPages: number = 0;
@@ -35,6 +35,7 @@ export class PokemonListComponent implements OnInit, OnChanges, OnDestroy {
   async ngOnInit() {
     console.log('PokemonListComponent: ngOnInit called');
     await this.fetchPokemon();
+    await this.fetchElements();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -43,6 +44,15 @@ export class PokemonListComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy() {
     console.log('PokemonListComponent: ngOnDestroy called');
+  }
+
+  async fetchElements() {
+    try {
+      this.elements = await this.pokemonService.getPokemonTypes();
+    } catch (error) {
+      console.error('Error fetching Pokémon types:', error);
+      this.elements = []; // Fallback to an empty array if fetching fails
+    }
   }
 
   async fetchPokemon() {

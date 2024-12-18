@@ -1,0 +1,17 @@
+<nav class="flex items-center justify-between px-6 py-4 text-white bg-gray-800">
+  <div class="text-lg font-bold">Training Angular</div>
+  <ul class="flex space-x-4">
+    <li>
+      <a routerLink="/" class="hover:underline">Home</a>
+    </li>
+    <li>
+      <a routerLink="/pokemon" class="hover:underline">Pokémon List</a>
+    </li>
+    <li>
+      <a routerLink="/submission" class="hover:underline">Submissions</a>
+    </li>
+    <li>
+      <a (click)="logout()" class="cursor-pointer hover:underline">Logout</a>
+    </li>
+  </ul>
+</nav>
