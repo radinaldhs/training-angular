@@ -58,35 +58,45 @@
     </div>
 
     <h2 class="mt-8 text-xl font-bold">Pokémon Bought</h2>
-    <div class="grid grid-cols-2 gap-4 my-5 mt-4 md:grid-cols-3">
-      <div
-        *ngFor="let pokemon of pokemonToBuy"
-        class="p-4 bg-gray-100 border border-gray-300 rounded shadow"
-      >
-        <img
-          [src]="pokemon.sprites.front_default"
-          alt="{{ pokemon.name }}"
-          class="object-contain w-full h-24"
-        />
-        <h3 class="mt-2 text-lg font-semibold text-center">
-          {{ pokemon.name | uppercase }}
-        </h3>
-        <ul class="mt-2 text-sm">
-          <li *ngFor="let type of pokemon.types">Type: {{ type.type.name }}</li>
-          <li *ngFor="let ability of pokemon.abilities">
-            Ability: {{ ability.ability.name }}
-          </li>
-          <li *ngFor="let stat of pokemon.stats">
-            {{ stat.stat.name }}: {{ stat.base_stat }}
-          </li>
-        </ul>
-        <div class="w-full my-2 text-center">
-          <button
-            class="p-3 text-center text-white bg-blue-600"
-            routerLink="/pokemon-detail/{{ pokemon.name }}"
-          >
-            See details
-          </button>
+    <div
+      *ngFor="let entry of pokemonToBuy; let idx = index"
+      class="inline my-2"
+    >
+      <h2 class="text-lg font-semibold">
+        Purchase {{ idx + 1 }} - Quantity: {{ entry.quantity }}
+      </h2>
+      <div class="grid grid-cols-2 gap-4 my-5 mt-4 md:grid-cols-3">
+        <div
+          *ngFor="let pokemon of entry.pokemon"
+          class="p-4 bg-gray-100 border border-gray-300 rounded shadow"
+        >
+          <img
+            [src]="pokemon.sprites.front_default"
+            alt="{{ pokemon.name }}"
+            class="object-contain w-full h-24"
+          />
+          <h3 class="mt-2 text-lg font-semibold text-center">
+            {{ pokemon.name | uppercase }}
+          </h3>
+          <ul class="mt-2 text-sm">
+            <li *ngFor="let type of pokemon.types">
+              Type: {{ type.type.name }}
+            </li>
+            <li *ngFor="let ability of pokemon.abilities">
+              Ability: {{ ability.ability.name }}
+            </li>
+            <li *ngFor="let stat of pokemon.stats">
+              {{ stat.stat.name }}: {{ stat.base_stat }}
+            </li>
+          </ul>
+          <div class="w-full my-2 text-center">
+            <button
+              class="p-3 text-center text-white bg-blue-600"
+              routerLink="/pokemon-detail/{{ pokemon.name }}"
+            >
+              See details
+            </button>
+          </div>
         </div>
       </div>
     </div>

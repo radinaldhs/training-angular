@@ -1,0 +1,42 @@
+<div class="p-6">
+  <h1 class="mb-4 text-2xl font-bold">Your Cart</h1>
+  <ul *ngIf="(cartItems$ | async)?.length; else emptyCart" class="space-y-4">
+    <li
+      *ngFor="let item of cartItems$ | async"
+      class="p-4 border rounded shadow"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-semibold">{{ item.pokemon.name | uppercase }}</p>
+          <p>Quantity: {{ item.quantity }}</p>
+        </div>
+        <button
+          class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+          (click)="removeItem(item.pokemon.name)"
+        >
+          Remove
+        </button>
+      </div>
+    </li>
+  </ul>
+  <ng-template #emptyCart>
+    <p class="text-gray-500">Your cart is empty.</p>
+  </ng-template>
+
+  <div class="mt-6">
+    <button
+      *ngIf="(cartItems$ | async)?.length"
+      (click)="clearCart()"
+      class="px-6 py-3 text-white bg-red-500 rounded me-2 hover:bg-red-600"
+    >
+      Clear Cart
+    </button>
+    <a
+      *ngIf="(cartItems$ | async)?.length"
+      routerLink="/checkout"
+      class="px-6 py-3 text-white bg-green-500 rounded hover:bg-green-600"
+    >
+      Go to Checkout
+    </a>
+  </div>
+</div>

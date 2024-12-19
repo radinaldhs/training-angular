@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PokemonService } from '../../services/pokemon.service';
+import { addToCart } from '../../state/cart/cart.actions';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-pokemon-detail-page',
@@ -20,7 +22,8 @@ export class PokemonDetailPageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pokemonService: PokemonService,
-    private router: Router
+    private router: Router,
+    private store: Store
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -92,5 +95,11 @@ export class PokemonDetailPageComponent implements OnInit {
 
   navigateToSubmission(): void {
     this.router.navigate(['/submission']);
+  }
+
+  addToCart(pokemon: any): void {
+    const cartItem = { pokemon, quantity: 1 };
+    alert(`Pokemon ${cartItem.pokemon.name} has been added to your cart!`);
+    this.store.dispatch(addToCart(cartItem));
   }
 }

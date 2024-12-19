@@ -10,6 +10,14 @@
     <li>
       <a routerLink="/submission" class="hover:underline">Submissions</a>
     </li>
+    <a routerLink="/cart" class="flex items-center hover:underline">
+      Cart
+      <span
+        class="px-2 py-1 ml-2 text-xs font-bold text-white bg-red-500 rounded-full"
+      >
+        {{ cartItemCount$ | async }}
+      </span>
+    </a>
     <li>
       <a (click)="logout()" class="cursor-pointer hover:underline">Logout</a>
     </li>

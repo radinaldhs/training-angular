@@ -35,6 +35,7 @@
         <div
           class="h-full bg-green-500 rounded-full"
           [style.width.%]="stat.base_stat"
+          style="max-width: 100%"
         ></div>
       </div>
     </div>
@@ -66,7 +67,8 @@
         [routerLink]="
           currentEvolutionIndex > 0
             ? [
-                '/pokemon-detail',
+                '/pokemon',
+                'pokemon-detail',
                 evolutionChain[currentEvolutionIndex - 1]?.name
               ]
             : null
@@ -82,7 +84,8 @@
         [routerLink]="
           currentEvolutionIndex < evolutionChain.length - 1
             ? [
-                '/pokemon-detail',
+                '/pokemon',
+                'pokemon-detail',
                 evolutionChain[currentEvolutionIndex + 1]?.name
               ]
             : null
@@ -112,14 +115,24 @@
       </ul>
     </div>
 
-    <div class="mt-6 text-center">
+    <!-- <div class="mt-6 text-center">
       <button
         class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
         (click)="toggleDrawer()"
       >
         Buy this
       </button>
+    </div> -->
+
+    <div class="mt-6 text-center">
+      <button
+        class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
+        (click)="addToCart(pokemon)"
+      >
+        Add to Cart
+      </button>
     </div>
+
     <div class="mt-6 text-center">
       <a
         routerLink="/pokemon"

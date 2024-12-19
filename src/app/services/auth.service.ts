@@ -1,9 +1,11 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject, NgZone } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { inject } from '@angular/core';
 import {
   Auth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from '@angular/fire/auth';
 import { RealtimeDatabaseService } from './realtime-database.service';
 
@@ -11,25 +13,38 @@ import { RealtimeDatabaseService } from './realtime-database.service';
   providedIn: 'root',
 })
 export class AuthService {
-  private auth: Auth = inject(Auth);
+  private auth: Auth | null = null;
+  private isBrowser: boolean;
 
   constructor(
     private realtimeDatabaseService: RealtimeDatabaseService,
-    private ngZone: NgZone
-  ) {}
+    private ngZone: NgZone,
+    @Inject(PLATFORM_ID) platformId: object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+    if (this.isBrowser) {
+      this.auth = inject(Auth);
+    }
+  }
 
   private isSessionStorageAvailable(): boolean {
     try {
-      return typeof window !== 'undefined' && !!window.sessionStorage;
+      return (
+        this.isBrowser &&
+        typeof window !== 'undefined' &&
+        !!window.sessionStorage
+      );
     } catch {
       return false;
     }
   }
 
   async login(email: string, password: string): Promise<void> {
+    if (!this.auth) return;
+
     try {
       const userCredential = await this.ngZone.runOutsideAngular(() =>
-        signInWithEmailAndPassword(this.auth, email, password)
+        signInWithEmailAndPassword(this.auth!, email, password)
       );
 
       const userData = {
@@ -54,9 +69,11 @@ export class AuthService {
   }
 
   async register(email: string, password: string): Promise<void> {
+    if (!this.auth) return;
+
     try {
       const userCredential = await this.ngZone.runOutsideAngular(() =>
-        createUserWithEmailAndPassword(this.auth, email, password)
+        createUserWithEmailAndPassword(this.auth!, email, password)
       );
 
       const userData = {
@@ -90,9 +107,13 @@ export class AuthService {
     if (this.isSessionStorageAvailable()) {
       sessionStorage.removeItem('user');
     }
-    this.ngZone.run(() => {
-      alert('Logged out successfully');
-    });
+    if (this.auth) {
+      signOut(this.auth).then(() => {
+        this.ngZone.run(() => {
+          alert('Logged out successfully');
+        });
+      });
+    }
   }
 
   getUser(): any {

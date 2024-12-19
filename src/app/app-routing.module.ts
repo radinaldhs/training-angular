@@ -1,51 +1,42 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CvPageComponent } from './cv/cv-page/cv-page.component';
-import { PokemonListComponent } from './components/pokemon-list/pokemon-list.component';
-import { PokemonDetailPageComponent } from './components/pokemon-detail-page/pokemon-detail-page.component';
-import { FormSubmissionsTableComponent } from './components/form-submissions-table/form-submissions-table.component';
-import { EditFormSubmissionComponent } from './components/edit-form-submission/edit-form-submission.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { AuthGuard } from './guards/auth.guard';
-import { CanDeactivateGuard } from './guards/can-deactivate.guard';
+import { CartComponent } from './components/cart/cart.component';
+import { CheckoutPageComponent } from './components/checkout/checkout-page.component';
 
 const routes: Routes = [
-  // Auth Page (no layout)
   {
     path: 'auth',
     component: AuthComponent,
   },
-
-  // Pages with Layout
   {
     path: '',
     component: LayoutComponent,
     canActivate: [AuthGuard],
     children: [
-      // CV Page
       { path: '', component: CvPageComponent },
-
-      // Pokémon List
-      { path: 'pokemon', component: PokemonListComponent },
-
-      // Pokémon Details
-      { path: 'pokemon-detail/:name', component: PokemonDetailPageComponent },
-
-      // Edit Form Submission
+      { path: 'cart', component: CartComponent },
+      { path: 'checkout', component: CheckoutPageComponent },
       {
-        path: 'edit-form-submission/:id',
-        component: EditFormSubmissionComponent,
-        canDeactivate: [CanDeactivateGuard],
+        path: 'pokemon',
+        loadChildren: () =>
+          import('./modules/pokemon/pokemon.module').then(
+            (m) => m.PokemonModule
+          ),
       },
-
-      // Form Submissions Table
-      { path: 'submission', component: FormSubmissionsTableComponent },
+      {
+        path: 'submission',
+        loadChildren: () =>
+          import('./modules/submissions/submission.module').then(
+            (m) => m.SubmissionModule
+          ),
+      },
     ],
   },
-
-  // Fallback Route
-  { path: '**', redirectTo: '' }, // Redirect unknown paths to the default route
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({

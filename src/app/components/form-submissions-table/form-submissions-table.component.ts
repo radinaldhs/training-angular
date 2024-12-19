@@ -59,7 +59,7 @@ export class FormSubmissionsTableComponent implements OnInit {
   }
 
   editSubmission(submissionId: string): void {
-    this.router.navigate(['/edit-form-submission', submissionId]);
+    this.router.navigate(['/submission/edit-form-submission', submissionId]);
   }
 
   openDeleteModal(submission: any): void {

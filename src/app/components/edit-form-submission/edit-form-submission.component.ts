@@ -47,19 +47,37 @@ export class EditFormSubmissionComponent
       this.submissionId
     );
 
+    // Update the buyOption if available
     if (submission.buyOption) {
       this.buyOption = submission.buyOption;
     }
 
+    // Fetch Pokemon details for each entry in pokemonToBuy
     if (submission.pokemonToBuy && Array.isArray(submission.pokemonToBuy)) {
       this.pokemonToBuy = await Promise.all(
-        submission.pokemonToBuy.map(async (pokemonName: string) => {
-          return this.pokemonService.getPokemonByName(pokemonName);
+        submission.pokemonToBuy.map(async (entry: any) => {
+          const detailedPokemons = await Promise.all(
+            entry.pokemon.map((pokemonName: string) =>
+              this.pokemonService.getPokemonByName(pokemonName)
+            )
+          );
+          return {
+            pokemon: detailedPokemons,
+            quantity: entry.quantity,
+          };
         })
       );
     }
 
-    this.submissionForm.patchValue(submission);
+    // Patch form values with the fetched submission data
+    this.submissionForm.patchValue({
+      firstName: submission.firstName || '',
+      lastName: submission.lastName || '',
+      email: submission.email || '',
+      phoneCountryCode: submission.phoneCountryCode || '+1',
+      phone: submission.phone || '',
+      address: submission.address || '',
+    });
 
     this.submissionForm.valueChanges.subscribe(() => {
       this.formDirty = true;
@@ -75,7 +93,10 @@ export class EditFormSubmissionComponent
     const updatedData = {
       ...this.submissionForm.value,
       buyOption: this.buyOption,
-      pokemonToBuy: this.pokemonToBuy.map((pokemon) => pokemon.name),
+      pokemonToBuy: this.pokemonToBuy.map((entry) => ({
+        pokemon: entry.pokemon.map((p: any) => p.name), // Map to Pokemon names only
+        quantity: entry.pokemon.length, // Ensure quantity matches the number of selected Pokemon
+      })),
     };
 
     try {

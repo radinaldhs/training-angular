@@ -20,7 +20,7 @@
         >
           Login
         </button>
-        <!-- <button
+        <button
           class="px-6 py-2 font-semibold text-white transition duration-200 rounded-lg focus:outline-none"
           [ngClass]="{
             'bg-blue-600 hover:bg-blue-700': activeTab === 'register',
@@ -29,12 +29,10 @@
           (click)="setActiveTab('register')"
         >
           Register
-        </button> -->
+        </button>
       </div>
 
-      <!-- Form -->
       <form class="mt-6 space-y-6">
-        <!-- Email Field -->
         <div>
           <label
             for="email"
@@ -52,7 +50,6 @@
           />
         </div>
 
-        <!-- Password Field -->
         <div>
           <label
             for="password"
@@ -70,7 +67,6 @@
           />
         </div>
 
-        <!-- Confirm Password Field -->
         <div *ngIf="activeTab === 'register'">
           <label
             for="confirmPassword"
@@ -88,7 +84,6 @@
           />
         </div>
 
-        <!-- Submit Button -->
         <button
           type="button"
           class="w-full py-3 text-white transition duration-200 rounded-lg focus:outline-none"
