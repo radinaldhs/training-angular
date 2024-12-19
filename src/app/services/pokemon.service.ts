@@ -1,3 +1,4 @@
+// src/app/services/pokemon.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -6,7 +7,8 @@ import { firstValueFrom } from 'rxjs';
   providedIn: 'root',
 })
 export class PokemonService {
-  private serverApiUrl = 'http://localhost:4001'; // Server-side API base URL
+  private apiUrl = 'https://pokeapi.co/api/v2/pokemon';
+  private apiSpeciesUrl = 'https://pokeapi.co/api/v2/pokemon-species';
 
   constructor(private http: HttpClient) {
     console.log('PokemonService: Constructor called');
@@ -14,43 +16,61 @@ export class PokemonService {
 
   async getPokemonTypes(): Promise<string[]> {
     const response = await firstValueFrom(
-      this.http.get<string[]>(`${this.serverApiUrl}/get-types`)
+      this.http.get<any>('https://pokeapi.co/api/v2/type')
     );
-    return response;
+    return response.results.map((type: any) => type.name);
   }
 
   async getPokemonList(limit: number = 20): Promise<any[]> {
     const response = await firstValueFrom(
-      this.http.get<any[]>(`${this.serverApiUrl}/get-list?limit=${limit}`)
+      this.http.get<any>(`${this.apiUrl}?limit=${limit}`)
     );
-    return response;
+    return response.results;
   }
 
   async getPokemonDetails(url: string): Promise<any> {
-    const response = await firstValueFrom(
-      this.http.post<any>(`${this.serverApiUrl}/get-details`, { url })
-    );
-    return response;
+    return firstValueFrom(this.http.get<any>(url));
   }
 
   async getPokemonByName(name: string): Promise<any> {
-    const response = await firstValueFrom(
-      this.http.get<any>(`${this.serverApiUrl}/get-pokemon/${name}`)
-    );
-    return response;
+    return firstValueFrom(this.http.get<any>(`${this.apiUrl}/${name}`));
   }
 
   async getPokemonSpecies(name: string): Promise<any> {
-    const response = await firstValueFrom(
-      this.http.get<any>(`${this.serverApiUrl}/get-species/${name}`)
-    );
-    return response;
+    return firstValueFrom(this.http.get<any>(`${this.apiSpeciesUrl}/${name}`));
   }
 
   async getPokemonEvolutionChain(url: string): Promise<any[]> {
-    const response = await firstValueFrom(
-      this.http.post<any[]>(`${this.serverApiUrl}/get-evolution-chain`, { url })
+    const response = await firstValueFrom(this.http.get<any>(url));
+    const chain = response.chain;
+
+    const evolutions = this.parseEvolutionChain(chain);
+    const detailedEvolutions = await Promise.all(
+      evolutions.map(async (evo) => {
+        const details = await this.getPokemonByName(evo.name);
+        return {
+          ...evo,
+          sprites: details.sprites,
+          selected: true,
+        };
+      })
     );
-    return response;
+
+    return detailedEvolutions;
+  }
+
+  private parseEvolutionChain(chain: any): any[] {
+    const evolutions = [];
+    let current = chain;
+
+    while (current) {
+      evolutions.push({
+        name: current.species.name,
+        url: current.species.url,
+      });
+      current = current.evolves_to[0];
+    }
+
+    return evolutions;
   }
 }

@@ -89,32 +89,27 @@
             <option value="all">Buy All Evolutions</option>
           </select>
           <!-- Display Selected Pokémon -->
+
           <div class="mt-4">
             <h4 class="font-semibold">Selected Pokémon:</h4>
-            <div class="grid grid-cols-2 gap-4">
+            <h3 class="text-lg font-semibold">
+              Pokémon for Item {{ i + 1 }} (Quantity:
+              {{ pokemonSelections.at(i).get("quantity")?.value }})
+            </h3>
+
+            <div class="grid grid-cols-3 gap-4">
               <div
-                *ngFor="let displayed of displayedPokemons; let i = index"
-                class="mb-4"
+                *ngFor="let pokemon of displayedPokemons[i]"
+                class="p-4 bg-gray-100 border border-gray-300 rounded shadow"
               >
-                <h3 class="text-lg font-semibold">
-                  Pokémon for Item {{ i + 1 }} (Quantity:
-                  {{ pokemonSelections.at(i).get("quantity")?.value }})
-                </h3>
-                <div class="grid grid-cols-3 gap-4">
-                  <div
-                    *ngFor="let pokemon of displayed"
-                    class="p-4 bg-gray-100 border border-gray-300 rounded shadow"
-                  >
-                    <img
-                      [src]="pokemon.sprites.front_default"
-                      alt="{{ pokemon.name }}"
-                      class="object-contain w-full h-24"
-                    />
-                    <h4 class="mt-2 font-semibold text-center">
-                      {{ pokemon.name | uppercase }}
-                    </h4>
-                  </div>
-                </div>
+                <img
+                  [src]="pokemon.sprites.front_default"
+                  alt="{{ pokemon.name }}"
+                  class="object-contain w-full h-24"
+                />
+                <h4 class="mt-2 font-semibold text-center">
+                  {{ pokemon.name | uppercase }}
+                </h4>
               </div>
             </div>
           </div>
